@@ -2,12 +2,11 @@
 #include <cstring>
 #include <geser/svg_widget.hpp>
 #include <geser/private/geometry.hpp>
-#include <librsvg/rsvg-cairo.h>
 
 geser::SvgWidget::SvgWidget()
     : Glib::ObjectBase(typeid(*this)),
       handle(nullptr),
-      geometry(std::make_shared<geser::Geometry>())
+      geometry(std::make_shared<geser::Geometry>(dom, handle))
 {
     set_has_window(true);
 }
@@ -36,6 +35,11 @@ void geser::SvgWidget::refresh()
 {
     refresh_renderer();
     queue_draw();
+}
+
+void geser::SvgWidget::grab_group(Glib::ustring const &_id)
+{
+    if(geometry) geometry->rebuild(_id);
 }
 
 void geser::SvgWidget::on_realize()
@@ -70,7 +74,10 @@ void geser::SvgWidget::on_unrealize()
 void geser::SvgWidget::on_size_allocate(Gtk::Allocation &_allocation)
 {
     set_allocation(_allocation);
-    if(window) window->move_resize(_allocation.get_x(), _allocation.get_y(), _allocation.get_width(), _allocation.get_height());
+    if(window) window->move_resize(_allocation.get_x(),
+				   _allocation.get_y(),
+				   _allocation.get_width(),
+				   _allocation.get_height());
 }
 
 bool geser::SvgWidget::on_draw(Cairo::RefPtr<Cairo::Context> const &_cr)
@@ -83,7 +90,7 @@ bool geser::SvgWidget::on_button_press_event(GdkEventButton *_event)
 {
     if(_event)
     {
-	std::cout << "x: " << _event->x << "\t" << "y: " << y << std::endl;
+	std::cout << "x: " << _event->x << "\t" << "y: " << _event->y << std::endl;
     }
     return true;
 }
@@ -94,7 +101,9 @@ void geser::SvgWidget::refresh_renderer()
 
     Glib::ustring str = dom.get_document()->write_to_string();
     GError *error = nullptr;
-    handle = rsvg_handle_new_from_data(reinterpret_cast<const guchar *>(str.c_str()), str.bytes(), &error);
+    handle = rsvg_handle_new_from_data(reinterpret_cast<const guchar *>(str.c_str()),
+				       str.bytes(),
+				       &error);
     if(error)
     {
 	std::cerr << error->message << std::endl;

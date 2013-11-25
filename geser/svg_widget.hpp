@@ -20,6 +20,7 @@ namespace geser
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
 	    void refresh();
+	    void grab_group(Glib::ustring const &_id);
 
 	protected:
 	    virtual void on_realize() override;

@@ -8,18 +8,30 @@ namespace geser
 {
     struct Bounds
     {
-	bool inside(int _x, int _y);
+	Bounds(int _x1, int _y1, int _x2, int _y2);
+	bool operator==(Bounds const &_bounds) const;
+	bool operator!=(Bounds const &_bounds) const;
+	bool operator<(Bounds const &_bounds) const;
+	bool operator>(Bounds const &_bounds) const;
+	bool inside(int _x, int _y) const;
 	int x1, y1, x2, y2;
     };
 
     class Geometry
     {
 	public:
-	    Geometry();
+	    Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle);
 
 	public:
-	    void rebuild(xmlpp::Document const &_doc, RsvgHandle *_handle);
+	    void rebuild(Glib::ustring const &_id);
 
+	private:
+	    typedef std::map<Glib::ustring, geser::Bounds> items_type;
+
+	private:
+	    xmlpp::DomParser &dom;
+	    RsvgHandle *&handle;
+	    items_type items;
     };
 }
 
