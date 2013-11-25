@@ -8,6 +8,10 @@ pkg_check_modules(LIBXML++ REQUIRED libxml++-2.6)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0)
 pkg_check_modules(GTKMM3 REQUIRED gtkmm-3.0)
 
+if(RSVG_VERSION VERSION_EQUAL 2.36.1)
+    set(RSVG_CAIRO_INCLUDE ON)
+endif()
+
 include_directories(${PROJECT_SOURCE_DIR} ${LIBXML++_INCLUDE_DIRS} ${RSVG_INCLUDE_DIRS} ${GTKMM3_INCLUDE_DIRS})
 
 file(GLOB SOURCE ${PROJECT_NAME}/*.cpp ${PROJECT_NAME}/private/*.cpp)

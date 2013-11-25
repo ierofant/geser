@@ -3,26 +3,17 @@
 
 #include <libxml++/parsers/domparser.h>
 #include <librsvg/rsvg.h>
+#include <geser/bounds.hpp>
 
 namespace geser
 {
-    struct Bounds
-    {
-	Bounds(int _x1, int _y1, int _x2, int _y2);
-	bool operator==(Bounds const &_bounds) const;
-	bool operator!=(Bounds const &_bounds) const;
-	bool operator<(Bounds const &_bounds) const;
-	bool operator>(Bounds const &_bounds) const;
-	bool inside(int _x, int _y) const;
-	int x1, y1, x2, y2;
-    };
-
     class Geometry
     {
 	public:
 	    Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle);
 
 	public:
+	    Glib::ustring get_element_at(int _x, int _y) const;
 	    void rebuild(Glib::ustring const &_id);
 
 	private:
@@ -36,4 +27,3 @@ namespace geser
 }
 
 #endif //GESER_PRIVATE_GEOMETRY_HPP_INCLUDED
-

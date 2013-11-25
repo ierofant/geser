@@ -16,6 +16,8 @@ namespace geser
 	    virtual ~SvgWidget();
 
 	public:
+	    Glib::ustring get_element_at(int _x, int _y) const;
+	    const xmlpp::Document* get_document() const;
 	    xmlpp::Document* get_document();
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
@@ -25,6 +27,8 @@ namespace geser
 	protected:
 	    virtual void on_realize() override;
 	    virtual void on_unrealize() override;
+	    virtual void get_preferred_width_vfunc(int &_minimum_width, int &_natural_width) const override;
+	    virtual void get_preferred_height_vfunc(int &_minimum_height, int &_natural_height) const override;
 	    virtual void on_size_allocate(Gtk::Allocation &_allocation) override;
 	    virtual bool on_draw(Cairo::RefPtr<Cairo::Context> const &_cr) override;
 	    virtual bool on_button_press_event(GdkEventButton *_event) override;

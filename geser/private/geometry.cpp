@@ -1,38 +1,7 @@
+#include <libxml/tree.h>
 #include <geser/private/geometry.hpp>
 
-geser::Bounds::Bounds(int _x1, int _y1, int _x2, int _y2)
-    : x1(_x1),
-      y1(_y1),
-      x2(_x2),
-      y2(_y2)
-{
-
-}
-
-bool geser::Bounds::operator==(Bounds const &_bounds) const
-{
-    return ((x2 - x1) * (y2 - y2)) == ((_bounds.x2 - _bounds.x1) * (_bounds.y2) - (_bounds.y1));
-}
-
-bool geser::Bounds::operator!=(Bounds const &_bounds) const
-{
-    return this->operator==(_bounds);
-}
-
-bool geser::Bounds::operator<(Bounds const &_bounds) const
-{
-    return ((x2 - x1) * (y2 - y2)) < ((_bounds.x2 - _bounds.x1) * (_bounds.y2) - (_bounds.y1));
-}
-
-bool geser::Bounds::operator>(Bounds const &_bounds) const
-{
-    return ((x2 - x1) * (y2 - y2)) == ((_bounds.x2 - _bounds.x1) * (_bounds.y2) - (_bounds.y1));
-}
-
-bool geser::Bounds::inside(int _x, int _y) const
-{
-    return ((_x >= x1) && (_x <= x2) && (_y >= y1) && (_y <= y2));
-}
+#include <iostream>
 
 geser::Geometry::Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle)
     : dom(_dom),
@@ -41,9 +10,47 @@ geser::Geometry::Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle)
 
 }
 
+Glib::ustring geser::Geometry::get_element_at(int _x, int _y) const
+{
+    Glib::ustring id;
+    for(auto &item:items)
+    {
+	if(item.second.inside(_x, _y))
+	{
+	    id = item.first;
+	    break;
+	}
+    }
+    return id;
+}
+
 void geser::Geometry::rebuild(Glib::ustring const &_id)
 {
     items.clear();
 
-    xmlpp::NodeSet nodes = dom.get_document().get_root_node().
+    if(handle)
+    {
+	Glib::ustring xpath = "/descendant-or-self::*[@id = '" + _id + "']";
+        xmlpp::NodeSet nodes = dom.get_document()->get_root_node()->find(xpath);
+	if(!nodes.empty())
+	{
+	    xmlpp::Node::NodeList children = nodes.front()->get_children();
+	    for(xmlpp::Node::NodeList::iterator itr = children.begin(); itr != children.end(); ++itr)
+	    {
+		if((*itr)->cobj()->type == XML_ELEMENT_NODE)
+	        {
+		    xmlpp::Element *element = static_cast<xmlpp::Element*>(*itr);
+		    Glib::ustring id = element->get_attribute_value("id"), sharp_id = "#" + id;;
+		    RsvgDimensionData dimension;
+		    RsvgPositionData position;
+		    if(rsvg_handle_get_dimensions_sub(handle, &dimension, sharp_id.c_str()) 
+			&& rsvg_handle_get_position_sub(handle, &position, sharp_id.c_str()))
+		    {
+			items[id] = Bounds(position.x, position.y, position.x + dimension.width, position.y + dimension.height);
+std::cout << id << '\t' << position.x << '\t' << position.y << '\t' <<  position.x + dimension.width << '\t' <<  position.y + dimension.height << std::endl;
+		    }
+		}
+	    }
+	}
+    }
 }
