@@ -3,7 +3,7 @@
 #include <geser/svg_widget.hpp>
 #include <geser/private/geometry.hpp>
 
-#if RSVG_CAIRO_INCLUDE == 1
+#ifdef RSVG_CAIRO_INCLUDE
 #include <librsvg/rsvg-cairo.h>
 #endif
 
