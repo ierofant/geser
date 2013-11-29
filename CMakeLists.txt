@@ -8,7 +8,7 @@ pkg_check_modules(LIBXML++ REQUIRED libxml++-2.6)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0)
 pkg_check_modules(GTKMM3 REQUIRED gtkmm-3.0)
 
-if(RSVG_VERSION VERSION_EQUAL 2.36.1)
+if(RSVG_VERSION VERSION_LESS 2.36.3)
     set(RSVG_CAIRO_INCLUDE ON)
 endif()
 
