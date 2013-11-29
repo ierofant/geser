@@ -10,6 +10,11 @@ geser::Geometry::Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle)
 
 }
 
+Glib::ustring geser::Geometry::get_current_grab() const
+{
+    return current_grab;
+}
+
 Glib::ustring geser::Geometry::get_element_at(int _x, int _y) const
 {
     Glib::ustring id;
@@ -24,9 +29,10 @@ Glib::ustring geser::Geometry::get_element_at(int _x, int _y) const
     return id;
 }
 
-void geser::Geometry::rebuild(Glib::ustring const &_id)
+void geser::Geometry::grab_group(Glib::ustring const &_id)
 {
     items.clear();
+    current_grab = _id;
 
     if(handle)
     {

@@ -61,7 +61,7 @@ void geser::SvgWidget::refresh()
 
 void geser::SvgWidget::grab_group(Glib::ustring const &_id)
 {
-    if(geometry) geometry->rebuild(_id);
+    if(geometry) geometry->grab_group(_id);
 }
 
 void geser::SvgWidget::on_realize()
