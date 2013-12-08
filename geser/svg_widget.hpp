@@ -12,17 +12,20 @@ namespace geser
     class SvgWidget : public Gtk::Widget
     {
 	public:
+	    typedef std::vector<xmlpp::Element*> ElementSet;
+
+	public:
 	    SvgWidget();
 	    virtual ~SvgWidget();
 
 	public:
-	    Glib::ustring get_element_at(int _x, int _y) const;
+	    ElementSet get_elements_at(int _x, int _y) const;
 	    const xmlpp::Document* get_document() const;
 	    xmlpp::Document* get_document();
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
 	    void refresh();
-	    void grab_group(Glib::ustring const &_id);
+	    void grab_items(xmlpp::NodeSet const &_nodes);
 
 	protected:
 	    virtual void on_realize() override;

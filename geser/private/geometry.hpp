@@ -10,17 +10,19 @@ namespace geser
     class Geometry
     {
 	public:
-	    Geometry(xmlpp::DomParser &_dom, RsvgHandle *&_handle);
+	    typedef std::vector<xmlpp::Element*> ElementSet;
 
 	public:
-	    Glib::ustring get_element_at(int _x, int _y) const;
-	    void rebuild(Glib::ustring const &_id);
+	    Geometry(RsvgHandle *&_handle);
+
+	public:
+	    ElementSet get_elements_at(int _x, int _y) const;
+	    void rebuild(xmlpp::NodeSet const &_nodes);
 
 	private:
-	    typedef std::map<Glib::ustring, geser::Bounds> items_type;
+	    typedef std::map<xmlpp::Element*, geser::Bounds> items_type;
 
 	private:
-	    xmlpp::DomParser &dom;
 	    RsvgHandle *&handle;
 	    items_type items;
     };
