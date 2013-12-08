@@ -24,6 +24,7 @@ namespace geser
 
 	private:
 	    RsvgHandle *&handle;
+	    Glib::ustring current_grab;
 	    items_type items;
     };
 }

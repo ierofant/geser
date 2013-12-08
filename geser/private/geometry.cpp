@@ -19,7 +19,7 @@ geser::Geometry::ElementSet geser::Geometry::get_elements_at(int _x, int _y) con
 void geser::Geometry::rebuild(xmlpp::NodeSet const &_nodes)
 {
     items.clear();
-    for(auto itr = _nodes.begin(); itr != _nodes.end(); ++itr)
+    for(auto itr = _nodes.begin(); itr != _nodes.end() && handle; ++itr)
     {
 	if((*itr)->cobj()->type == XML_ELEMENT_NODE)
 	{
