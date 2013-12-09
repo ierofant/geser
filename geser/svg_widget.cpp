@@ -93,16 +93,30 @@ void geser::SvgWidget::on_unrealize()
 
 void geser::SvgWidget::get_preferred_width_vfunc(int &_minimum_width, int &_natural_width) const
 {
-    xmlpp::Element *element = get_document()->get_root_node();
-    Glib::ustring str = element->get_attribute_value("width");
-    if(!str.empty()) _minimum_width = _natural_width = std::ceil(std::atof(str.c_str()));
+    Glib::ustring str;
+    auto *doc = get_document();
+    if(doc)
+    {
+	auto *root = doc->get_root_node();
+	if(root) str = root->get_attribute_value("width");
+    }
+
+    if(str.empty()) Gtk::Widget::get_preferred_width_vfunc(_minimum_width, _natural_width)
+    else _minimum_width = _natural_width = std::ceil(std::atof(str.c_str()));
 }
 
 void geser::SvgWidget::get_preferred_height_vfunc(int &_minimum_height, int &_natural_height) const
 {
-    xmlpp::Element *element = get_document()->get_root_node();
-    Glib::ustring str = element->get_attribute_value("height");
-    if(!str.empty()) _minimum_height = _natural_height = std::ceil(std::atof(str.c_str()));
+    Glib::ustring str;
+    auto *doc = get_document();
+    if(doc)
+    {
+	auto *root = doc->get_root_node();
+	if(root) str = root->get_attribute_value("height");
+    }
+
+    if(str.empty()) Gtk::Widget::get_preferred_height_vfunc(_minimum_height, _natural_height)
+    else _minimum_height = _natural_height = std::ceil(std::atof(str.c_str()));
 }
 
 void geser::SvgWidget::on_size_allocate(Gtk::Allocation &_allocation)
