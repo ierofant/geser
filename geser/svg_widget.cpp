@@ -101,7 +101,7 @@ void geser::SvgWidget::get_preferred_width_vfunc(int &_minimum_width, int &_natu
 	if(root) str = root->get_attribute_value("width");
     }
 
-    if(str.empty()) Gtk::Widget::get_preferred_width_vfunc(_minimum_width, _natural_width)
+    if(str.empty()) Gtk::Widget::get_preferred_width_vfunc(_minimum_width, _natural_width);
     else _minimum_width = _natural_width = std::ceil(std::atof(str.c_str()));
 }
 
@@ -115,7 +115,7 @@ void geser::SvgWidget::get_preferred_height_vfunc(int &_minimum_height, int &_na
 	if(root) str = root->get_attribute_value("height");
     }
 
-    if(str.empty()) Gtk::Widget::get_preferred_height_vfunc(_minimum_height, _natural_height)
+    if(str.empty()) Gtk::Widget::get_preferred_height_vfunc(_minimum_height, _natural_height);
     else _minimum_height = _natural_height = std::ceil(std::atof(str.c_str()));
 }
 
