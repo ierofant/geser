@@ -27,6 +27,13 @@ geser::SvgWidget::ElementSet geser::SvgWidget::get_elements_at(int _x, int _y) c
     return elements;
 }
 
+geser::Bounds geser::SvgWidget::get_bounds(xmlpp::Element *_element)
+{
+    geser::Bounds bounds;
+    if(geometry) bounds = geometry->get_bounds(_element);
+    return bounds;
+}
+
 const xmlpp::Document* geser::SvgWidget::get_document() const
 {
     return dom.get_document();
@@ -54,12 +61,19 @@ void geser::SvgWidget::set_source_file(Glib::ustring const &_filename)
 void geser::SvgWidget::refresh()
 {
     refresh_renderer();
-    queue_draw();
+    queue_resize();
 }
 
 void geser::SvgWidget::grab_items(xmlpp::NodeSet const &_nodes)
 {
     if(geometry) geometry->rebuild(_nodes);
+}
+
+void geser::SvgWidget::grab_items(xmlpp::Node::NodeList const &_node)
+{
+    xmlpp::NodeSet nodes;
+    std::copy(_node.begin(), _node.end(), std::back_inserter(nodes));
+    grab_items(nodes);
 }
 
 void geser::SvgWidget::on_realize()
@@ -136,10 +150,7 @@ bool geser::SvgWidget::on_draw(Cairo::RefPtr<Cairo::Context> const &_cr)
 
 bool geser::SvgWidget::on_button_press_event(GdkEventButton *_event)
 {
-    if(_event)
-    {
-    }
-    return true;
+    return false;
 }
 
 void geser::SvgWidget::refresh_renderer()

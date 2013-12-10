@@ -17,6 +17,7 @@ namespace geser
 
 	public:
 	    ElementSet get_elements_at(int _x, int _y) const;
+	    Bounds get_bounds(xmlpp::Element *_element) const;
 	    void rebuild(xmlpp::NodeSet const &_nodes);
 
 	private:

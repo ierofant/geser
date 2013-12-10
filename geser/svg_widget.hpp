@@ -5,6 +5,7 @@
 #include <gtkmm/widget.h>
 #include <libxml++/parsers/domparser.h>
 #include <librsvg/rsvg.h>
+#include <geser/bounds.hpp>
 
 namespace geser
 {
@@ -20,12 +21,14 @@ namespace geser
 
 	public:
 	    ElementSet get_elements_at(int _x, int _y) const;
+	    Bounds get_bounds(xmlpp::Element *_element);
 	    const xmlpp::Document* get_document() const;
 	    xmlpp::Document* get_document();
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
 	    void refresh();
 	    void grab_items(xmlpp::NodeSet const &_nodes);
+	    void grab_items(xmlpp::Node::NodeList const &_node);
 
 	protected:
 	    virtual void on_realize() override;
