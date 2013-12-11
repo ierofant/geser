@@ -9,6 +9,8 @@
 
 geser::SvgWidget::SvgWidget()
     : Glib::ObjectBase(typeid(*this)),
+      property_scalable_(*this, "scalable", true),
+      property_scale_(*this, "scale", 1),
       handle(nullptr),
       geometry(std::make_shared<geser::Geometry>(handle))
 {
@@ -144,7 +146,11 @@ void geser::SvgWidget::on_size_allocate(Gtk::Allocation &_allocation)
 
 bool geser::SvgWidget::on_draw(Cairo::RefPtr<Cairo::Context> const &_cr)
 {
-    if(_cr && handle) rsvg_handle_render_cairo(handle, _cr->cobj());
+    if(_cr)
+    {
+	if(property_scalable_ = true) _cr->scale(property_scale_, property_scale_);
+	if(handle) rsvg_handle_render_cairo(handle, _cr->cobj());
+    }
     return true;
 }
 

@@ -2,6 +2,7 @@
 #define SVG_WIDGET_HPP_INCLUDED
 
 #include <memory>
+#include <glibmm/property.h>
 #include <gtkmm/widget.h>
 #include <libxml++/parsers/domparser.h>
 #include <librsvg/rsvg.h>
@@ -44,6 +45,8 @@ namespace geser
 
 	private:
 	    Glib::RefPtr<Gdk::Window> window;
+	    Glib::Property<bool> property_scalable_;
+	    Glib::Property<double> property_scale_;
 	    RsvgHandle *handle;
 	    xmlpp::DomParser dom;
 	    std::shared_ptr<geser::Geometry> geometry;
