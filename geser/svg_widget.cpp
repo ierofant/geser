@@ -15,6 +15,7 @@ geser::SvgWidget::SvgWidget()
       geometry(std::make_shared<geser::Geometry>(handle))
 {
     set_has_window(true);
+    Glib::SignalProxyProperty(this, "scale").connect(sigc::mem_fun(*this, &geser::SvgWidget::on_change_scale));
 }
 
 geser::SvgWidget::~SvgWidget()
@@ -22,18 +23,19 @@ geser::SvgWidget::~SvgWidget()
     if(handle) g_object_unref(handle);
 }
 
-geser::SvgWidget::ElementSet geser::SvgWidget::get_elements_at(int _x, int _y) const
+double geser::SvgWidget::get_scale() const
 {
-    ElementSet elements;
-    if(geometry) elements = geometry->get_elements_at(_x, _y);
-    return elements;
+    return property_scale_;
 }
 
-geser::Bounds geser::SvgWidget::get_bounds(xmlpp::Element *_element)
+geser::SvgWidget::ElementSet geser::SvgWidget::get_elements_at(int _x, int _y) const
 {
-    geser::Bounds bounds;
-    if(geometry) bounds = geometry->get_bounds(_element);
-    return bounds;
+    return get_elements_at_vfunc(_x, _y);
+}
+
+geser::Bounds geser::SvgWidget::get_bounds(xmlpp::Element *_element) const
+{
+    return get_bounds_vfunc(_element);
 }
 
 const xmlpp::Document* geser::SvgWidget::get_document() const
@@ -118,7 +120,7 @@ void geser::SvgWidget::get_preferred_width_vfunc(int &_minimum_width, int &_natu
     }
 
     if(str.empty()) Gtk::Widget::get_preferred_width_vfunc(_minimum_width, _natural_width);
-    else _minimum_width = _natural_width = std::ceil(std::atof(str.c_str()));
+    else _minimum_width = _natural_width = std::ceil(std::atof(str.c_str()) * property_scale_.get_value());
 }
 
 void geser::SvgWidget::get_preferred_height_vfunc(int &_minimum_height, int &_natural_height) const
@@ -132,7 +134,7 @@ void geser::SvgWidget::get_preferred_height_vfunc(int &_minimum_height, int &_na
     }
 
     if(str.empty()) Gtk::Widget::get_preferred_height_vfunc(_minimum_height, _natural_height);
-    else _minimum_height = _natural_height = std::ceil(std::atof(str.c_str()));
+    else _minimum_height = _natural_height = std::ceil(std::atof(str.c_str()) * property_scale_.get_value());
 }
 
 void geser::SvgWidget::on_size_allocate(Gtk::Allocation &_allocation)
@@ -151,12 +153,41 @@ bool geser::SvgWidget::on_draw(Cairo::RefPtr<Cairo::Context> const &_cr)
 	if(property_scalable_ = true) _cr->scale(property_scale_, property_scale_);
 	if(handle) rsvg_handle_render_cairo(handle, _cr->cobj());
     }
-    return true;
+    return false;
 }
 
-bool geser::SvgWidget::on_button_press_event(GdkEventButton *_event)
+bool geser::SvgWidget::on_scroll_event(GdkEventScroll *_event)
 {
-    return false;
+    bool retval = false;
+    if(	_event && 
+	property_scalable_.get_value() && 
+	(_event->state &= 4) &&
+	(_event->delta_y != 0))
+    {
+	double scale = property_scale_.get_value() + 0.1 * -_event->delta_y;
+	if(scale >= 0.1) property_scale_.set_value(scale);
+	retval = true;
+    }
+    return retval;
+}
+
+void geser::SvgWidget::on_change_scale()
+{
+    queue_resize();    
+}
+
+geser::SvgWidget::ElementSet geser::SvgWidget::get_elements_at_vfunc(int _x, int _y) const
+{
+    ElementSet elements;
+    if(geometry) elements = geometry->get_elements_at(_x, _y);
+    return elements;
+}
+
+geser::Bounds geser::SvgWidget::get_bounds_vfunc(xmlpp::Element *_element) const
+{
+    geser::Bounds bounds;
+    if(geometry) bounds = geometry->get_bounds(_element);
+    return bounds;
 }
 
 void geser::SvgWidget::refresh_renderer()

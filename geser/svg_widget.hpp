@@ -21,8 +21,9 @@ namespace geser
 	    virtual ~SvgWidget();
 
 	public:
+	    double get_scale() const;
 	    ElementSet get_elements_at(int _x, int _y) const;
-	    Bounds get_bounds(xmlpp::Element *_element);
+	    Bounds get_bounds(xmlpp::Element *_element) const;
 	    const xmlpp::Document* get_document() const;
 	    xmlpp::Document* get_document();
 	    void set_source(Glib::ustring const &_str);
@@ -38,7 +39,10 @@ namespace geser
 	    virtual void get_preferred_height_vfunc(int &_minimum_height, int &_natural_height) const override;
 	    virtual void on_size_allocate(Gtk::Allocation &_allocation) override;
 	    virtual bool on_draw(Cairo::RefPtr<Cairo::Context> const &_cr) override;
-	    virtual bool on_button_press_event(GdkEventButton *_event) override;
+	    virtual bool on_scroll_event(GdkEventScroll *_event) override;
+	    virtual void on_change_scale();
+	    virtual ElementSet get_elements_at_vfunc(int _x, int _y) const;
+	    virtual Bounds get_bounds_vfunc(xmlpp::Element *_element) const;
 
 	private:
 	    void refresh_renderer();
