@@ -9,6 +9,16 @@ geser::Bounds::Bounds(int _x1, int _y1, int _x2, int _y2)
 
 }
 
+int geser::Bounds::width() const
+{
+    return x2 - x1;
+}
+
+int geser::Bounds::height() const
+{
+    return y2 - y1;
+}
+
 int geser::Bounds::area() const
 {
     return (x2 - x1) * (y2 - y1);

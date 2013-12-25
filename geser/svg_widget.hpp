@@ -29,8 +29,10 @@ namespace geser
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
 	    void refresh();
+	    void update_renderer();
 	    void grab_items(xmlpp::NodeSet const &_nodes);
 	    void grab_items(xmlpp::Node::NodeList const &_node);
+	    void queue_draw_bounds(geser::Bounds const &_bounds);
 
 	protected:
 	    virtual void on_realize() override;
@@ -43,9 +45,6 @@ namespace geser
 	    virtual void on_change_scale();
 	    virtual ElementSet get_elements_at_vfunc(int _x, int _y) const;
 	    virtual Bounds get_bounds_vfunc(xmlpp::Element *_element) const;
-
-	private:
-	    void refresh_renderer();
 
 	private:
 	    Glib::RefPtr<Gdk::Window> window;

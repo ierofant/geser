@@ -64,8 +64,31 @@ void geser::SvgWidget::set_source_file(Glib::ustring const &_filename)
 
 void geser::SvgWidget::refresh()
 {
-    refresh_renderer();
+    update_renderer();
     queue_resize();
+}
+
+void geser::SvgWidget::update_renderer()
+{
+    if(handle) g_object_unref(handle);
+
+    Glib::ustring str = dom.get_document()->write_to_string();
+    GError *error = nullptr;
+    handle = rsvg_handle_new_from_data(reinterpret_cast<const guchar*>(str.c_str()),
+				       str.bytes(),
+				       &error);
+    if(error)
+    {
+	std::cerr << error->message << std::endl;
+	g_error_free(error);
+    }
+
+    rsvg_handle_close(handle, &error);
+    if(error)
+    {
+	std::cerr << error->message << std::endl;
+	g_error_free(error);
+    }    
 }
 
 void geser::SvgWidget::grab_items(xmlpp::NodeSet const &_nodes)
@@ -73,11 +96,17 @@ void geser::SvgWidget::grab_items(xmlpp::NodeSet const &_nodes)
     if(geometry) geometry->rebuild(_nodes);
 }
 
+
 void geser::SvgWidget::grab_items(xmlpp::Node::NodeList const &_node)
 {
     xmlpp::NodeSet nodes;
     std::copy(_node.begin(), _node.end(), std::back_inserter(nodes));
     grab_items(nodes);
+}
+
+void geser::SvgWidget::queue_draw_bounds(geser::Bounds const &_bounds)
+{
+    queue_draw_area(_bounds.x1, _bounds.y1, _bounds.width(), _bounds.height());
 }
 
 void geser::SvgWidget::on_realize()
@@ -188,27 +217,4 @@ geser::Bounds geser::SvgWidget::get_bounds_vfunc(xmlpp::Element *_element) const
     geser::Bounds bounds;
     if(geometry) bounds = geometry->get_bounds(_element);
     return bounds;
-}
-
-void geser::SvgWidget::refresh_renderer()
-{
-    if(handle) g_object_unref(handle);
-
-    Glib::ustring str = dom.get_document()->write_to_string();
-    GError *error = nullptr;
-    handle = rsvg_handle_new_from_data(reinterpret_cast<const guchar*>(str.c_str()),
-				       str.bytes(),
-				       &error);
-    if(error)
-    {
-	std::cerr << error->message << std::endl;
-	g_error_free(error);
-    }
-
-    rsvg_handle_close(handle, &error);
-    if(error)
-    {
-	std::cerr << error->message << std::endl;
-	g_error_free(error);
-    }
 }
