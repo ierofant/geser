@@ -26,6 +26,8 @@ namespace geser
 	    Bounds get_bounds(xmlpp::Element *_element) const;
 	    const xmlpp::Document* get_document() const;
 	    xmlpp::Document* get_document();
+	    const xmlpp::Element* get_root_node() const;
+	    xmlpp::Element* get_root_node();
 	    void set_source(Glib::ustring const &_str);
 	    void set_source_file(Glib::ustring const &_filename);
 	    void refresh();

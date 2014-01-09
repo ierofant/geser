@@ -48,6 +48,22 @@ xmlpp::Document* geser::SvgWidget::get_document()
     return dom.get_document();
 }
 
+const xmlpp::Element* geser::SvgWidget::get_root_node() const
+{
+    const xmlpp::Element *root = nullptr;
+    auto *doc = get_document();
+    if(doc) root = doc->get_root_node();
+    return root;
+}
+
+xmlpp::Element* geser::SvgWidget::get_root_node()
+{
+    xmlpp::Element *root = nullptr;
+    auto *doc = get_document();
+    if(doc) root = doc->get_root_node();
+    return root;
+}
+
 void geser::SvgWidget::set_source(Glib::ustring const &_str)
 {
     dom.parse_memory(_str);
